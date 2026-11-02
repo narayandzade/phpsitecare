@@ -1,0 +1,2003 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>PHPSiteCare</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f4f3ee;
+  --card: #ffffff;
+  --card2: #faf9f5;
+  --ink: #10201e;
+  --mut: #5d6f6b;
+  --line: #e2e0d6;
+  --acc: #0f766e;
+  --acc2: #0891b2;
+  --onacc: #ffffff;
+  --accsoft: rgba(15, 118, 110, .12);
+  --accshadow: rgba(15, 118, 110, .3);
+  --ok: #16a34a;
+  --err: #dc2626;
+  --warn: #d97706;
+  --info: #0284c7;
+  --shadow: 0 1px 2px rgba(16, 32, 30, .05), 0 10px 28px rgba(16, 32, 30, .07);
+  --term: #091210;
+  --termink: #d3e6e1;
+  --glow: rgba(13, 148, 136, .16);
+  --grain: .06;
+  --sans: "Plus Jakarta Sans", -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #060a09;
+    --card: #0e1514;
+    --card2: #131b1a;
+    --ink: #e6efed;
+    --mut: #89a09b;
+    --line: #1e2b29;
+    --acc: #2dd4bf;
+    --acc2: #22d3ee;
+    --onacc: #03201c;
+    --accsoft: rgba(45, 212, 191, .14);
+    --accshadow: rgba(45, 212, 191, .22);
+    --ok: #34d399;
+    --err: #f87171;
+    --warn: #fbbf24;
+    --info: #38bdf8;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .45), 0 12px 32px rgba(0, 0, 0, .4);
+    --term: #040706;
+    --glow: rgba(45, 212, 191, .12);
+    --grain: .09;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #060a09;
+  --card: #0e1514;
+  --card2: #131b1a;
+  --ink: #e6efed;
+  --mut: #89a09b;
+  --line: #1e2b29;
+  --acc: #2dd4bf;
+  --acc2: #22d3ee;
+  --onacc: #03201c;
+  --accsoft: rgba(45, 212, 191, .14);
+  --accshadow: rgba(45, 212, 191, .22);
+  --ok: #34d399;
+  --err: #f87171;
+  --warn: #fbbf24;
+  --info: #38bdf8;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .45), 0 12px 32px rgba(0, 0, 0, .4);
+  --term: #040706;
+  --glow: rgba(45, 212, 191, .12);
+  --grain: .09;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+[hidden] { display: none !important; }
+
+body {
+  position: relative;
+  margin: 0;
+  min-height: 100vh;
+  color: var(--ink);
+  font: 14px/1.6 var(--sans);
+  background:
+    radial-gradient(900px 440px at 88% -12%, var(--glow), transparent 60%),
+    radial-gradient(760px 400px at -10% 0, var(--glow), transparent 60%),
+    var(--bg);
+  background-attachment: fixed;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: var(--grain);
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .5  0 0 0 0 .5  0 0 0 0 .5  0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: .5;
+  background-image: radial-gradient(color-mix(in srgb, var(--mut) 28%, transparent) 1px, transparent 1px);
+  background-size: 26px 26px;
+  -webkit-mask-image: linear-gradient(180deg, #000, transparent 55%);
+  mask-image: linear-gradient(180deg, #000, transparent 55%);
+}
+
+header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px max(20px, env(safe-area-inset-right)) 14px max(20px, env(safe-area-inset-left));
+  background: color-mix(in srgb, var(--bg) 78%, transparent);
+  backdrop-filter: saturate(1.4) blur(14px);
+  -webkit-backdrop-filter: saturate(1.4) blur(14px);
+  border-bottom: 1px solid var(--line);
+}
+
+.brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+
+.logo {
+  width: 40px;
+  height: 40px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: 13px;
+  color: var(--onacc);
+  font-weight: 800;
+  font-size: 17px;
+  background: linear-gradient(135deg, var(--acc), var(--acc2));
+  box-shadow: 0 8px 18px var(--accshadow);
+}
+
+h1 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sub { margin-top: 1px; font-size: 12px; color: var(--mut); }
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+
+.tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--mut);
+  background: transparent;
+  border: 0;
+  border-radius: 10px;
+  box-shadow: none;
+  transition: color .15s, background .15s;
+}
+
+.tab svg { width: 16px; height: 16px; flex: none; }
+.tab:hover { color: var(--ink); background: var(--card2); transform: none; box-shadow: none; }
+
+.tab.on {
+  color: var(--onacc);
+  background: linear-gradient(135deg, var(--acc), var(--acc2));
+  box-shadow: 0 6px 14px var(--accshadow);
+}
+
+.tab.on:hover { color: var(--onacc); background: linear-gradient(135deg, var(--acc), var(--acc2)); }
+
+.hright { display: flex; align-items: center; gap: 10px; flex: none; }
+
+main {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(340px, 430px) minmax(0, 1fr);
+  gap: 22px;
+  align-items: start;
+  max-width: 1560px;
+  margin: 0 auto;
+  padding: 24px max(20px, env(safe-area-inset-right)) 40px max(20px, env(safe-area-inset-left));
+}
+
+.col { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
+
+.card {
+  min-width: 0;
+  padding: 20px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+}
+
+.ch { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 0 0 16px; }
+
+h2 {
+  margin: 0;
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: var(--mut);
+}
+
+.count {
+  padding: 1px 9px;
+  font-size: 11px;
+  color: var(--mut);
+  background: var(--card2);
+  border: 1px solid var(--line);
+  border-radius: 99px;
+}
+
+label { display: block; margin: 14px 0 6px; font-size: 12px; font-weight: 600; color: var(--mut); }
+label:first-of-type { margin-top: 0; }
+
+input[type=text] {
+  width: 100%;
+  padding: 11px 13px;
+  font: inherit;
+  color: var(--ink);
+  background: var(--card2);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  transition: border-color .15s, box-shadow .15s, background .15s;
+}
+
+input[type=text]::placeholder { color: var(--mut); opacity: .65; }
+
+input[type=text]:focus {
+  outline: 0;
+  background: var(--card);
+  border-color: var(--acc);
+  box-shadow: 0 0 0 4px var(--accsoft);
+}
+
+.opts { display: grid; gap: 8px; margin-top: 16px; }
+
+.chk {
+  display: flex;
+  gap: 11px;
+  align-items: flex-start;
+  margin: 0;
+  padding: 11px 13px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--ink);
+  background: var(--card2);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
+}
+
+.chk:hover { border-color: var(--acc); }
+
+.chk input {
+  appearance: none;
+  -webkit-appearance: none;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  margin: 1px 0 0;
+  background: var(--card);
+  border: 1.5px solid var(--mut);
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all .15s;
+}
+
+.chk input::after {
+  content: "";
+  width: 9px;
+  height: 5px;
+  border-left: 2px solid var(--onacc);
+  border-bottom: 2px solid var(--onacc);
+  transform: rotate(-45deg) translate(1px, -1px) scale(0);
+  transition: transform .12s;
+}
+
+.chk input:checked { background: var(--acc); border-color: var(--acc); }
+.chk input:checked::after { transform: rotate(-45deg) translate(1px, -1px) scale(1); }
+.chk input:focus-visible { outline: 0; box-shadow: 0 0 0 4px var(--accsoft); }
+
+button {
+  padding: 11px 18px;
+  font: inherit;
+  font-weight: 700;
+  color: var(--onacc);
+  background: linear-gradient(135deg, var(--acc), var(--acc2));
+  border: 0;
+  border-radius: 12px;
+  box-shadow: 0 8px 18px var(--accshadow);
+  cursor: pointer;
+  transition: transform .12s, box-shadow .15s, opacity .15s, background .15s;
+}
+
+button:hover { transform: translateY(-1px); box-shadow: 0 12px 24px var(--accshadow); }
+button:active { transform: translateY(0); }
+button:focus-visible { outline: 0; box-shadow: 0 0 0 4px var(--accsoft); }
+button:disabled { opacity: .45; cursor: not-allowed; transform: none; box-shadow: none; }
+
+button.ghost {
+  color: var(--ink);
+  background: var(--card);
+  border: 1px solid var(--line);
+  box-shadow: none;
+}
+
+button.ghost:hover { background: var(--card2); transform: none; box-shadow: none; }
+
+button.danger {
+  color: #fff;
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  box-shadow: 0 8px 18px rgba(220, 38, 38, .28);
+}
+
+button.busy { position: relative; color: transparent; }
+
+button.busy::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 18px;
+  height: 18px;
+  border: 2px solid color-mix(in srgb, var(--onacc) 40%, transparent);
+  border-top-color: var(--onacc);
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+
+.iconbtn {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  color: var(--ink);
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: none;
+}
+
+.iconbtn:hover { background: var(--card2); transform: none; box-shadow: none; }
+.iconbtn svg { width: 18px; height: 18px; }
+
+.startbtn { width: 100%; margin-top: 18px; padding: 13px 18px; font-size: 15px; }
+.startbtn + .startbtn { margin-top: 10px; }
+
+.info {
+  margin-top: 14px;
+  padding: 11px 13px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--mut);
+  word-break: break-all;
+  background: var(--card2);
+  border: 1px dashed var(--line);
+  border-radius: 12px;
+}
+
+.list { display: grid; gap: 6px; max-height: 340px; margin: -4px; padding: 4px; overflow: auto; }
+
+.proj {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 12px;
+  background: var(--card2);
+  border: 1px solid transparent;
+  border-radius: 13px;
+  cursor: pointer;
+  transition: border-color .15s, background .15s, transform .12s, box-shadow .15s;
+}
+
+.proj:hover { background: var(--accsoft); border-color: var(--acc); }
+.proj:active { transform: scale(.995); }
+
+.proj.sel, .hist.sel {
+  background: var(--accsoft);
+  border-color: var(--acc);
+  box-shadow: 0 0 0 3px var(--accsoft);
+}
+
+.proj.sel b, .hist.sel b { color: var(--acc); }
+
+.proj.sel .pi {
+  color: var(--onacc);
+  background: linear-gradient(135deg, var(--acc), var(--acc2));
+}
+
+.pi {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 30px;
+  height: 30px;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--acc);
+  background: var(--accsoft);
+  border-radius: 10px;
+}
+
+.proj b { flex: 1; min-width: 0; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.tags { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 9px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--mut);
+  white-space: nowrap;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 99px;
+}
+
+.tag.ok, .pill.ok {
+  color: var(--ok);
+  background: color-mix(in srgb, var(--ok) 9%, var(--card));
+  border-color: color-mix(in srgb, var(--ok) 35%, var(--line));
+}
+
+.tag.err, .pill.err {
+  color: var(--err);
+  background: color-mix(in srgb, var(--err) 9%, var(--card));
+  border-color: color-mix(in srgb, var(--err) 35%, var(--line));
+}
+
+.tag.warn, .pill.warn {
+  color: var(--warn);
+  background: color-mix(in srgb, var(--warn) 9%, var(--card));
+  border-color: color-mix(in srgb, var(--warn) 35%, var(--line));
+}
+
+.tag.info {
+  color: var(--info);
+  background: color-mix(in srgb, var(--info) 9%, var(--card));
+  border-color: color-mix(in srgb, var(--info) 35%, var(--line));
+}
+
+.tag.live::before, .pill.live::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  background: currentColor;
+  border-radius: 50%;
+  animation: pulse 1s infinite;
+}
+
+.hist {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  font-size: 13px;
+  background: var(--card2);
+  border: 1px solid transparent;
+  border-radius: 13px;
+  cursor: pointer;
+  transition: border-color .15s, background .15s, box-shadow .15s;
+}
+
+.hist:hover { background: var(--accsoft); border-color: var(--acc); }
+.hist span:first-child { display: flex; flex: 1; flex-direction: column; min-width: 0; overflow: hidden; }
+.hist b { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.hist small {
+  font-size: 11px;
+  color: var(--mut);
+  font-family: var(--mono);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.empty {
+  padding: 22px 10px;
+  font-size: 13px;
+  text-align: center;
+  color: var(--mut);
+  border: 1px dashed var(--line);
+  border-radius: 13px;
+}
+
+.pill {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 11px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--mut);
+  white-space: nowrap;
+  background: var(--card2);
+  border: 1px solid var(--line);
+  border-radius: 99px;
+}
+
+.pill.show { display: inline-flex; }
+
+.jt { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.jt h2 { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.pr { display: flex; align-items: center; gap: 12px; margin: 0 0 18px; }
+
+.bar {
+  flex: 1;
+  height: 8px;
+  overflow: hidden;
+  background: var(--card2);
+  border: 1px solid var(--line);
+  border-radius: 99px;
+}
+
+.bar i {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--acc), var(--acc2));
+  border-radius: 99px;
+  transition: width .5s cubic-bezier(.4, 0, .2, 1);
+}
+
+.pct {
+  min-width: 36px;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: right;
+  color: var(--mut);
+  font-variant-numeric: tabular-nums;
+}
+
+.steps { display: grid; }
+
+.step { position: relative; display: flex; align-items: center; gap: 14px; padding: 9px 0; }
+
+.step::before {
+  content: "";
+  position: absolute;
+  left: 12px;
+  top: -50%;
+  bottom: 50%;
+  width: 2px;
+  background: var(--line);
+}
+
+.step:first-child::before { display: none; }
+.step.done::before { background: var(--ok); }
+
+.dot {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 26px;
+  height: 26px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--mut);
+  background: var(--card);
+  border: 2px solid var(--line);
+  border-radius: 50%;
+}
+
+.running .dot { color: var(--acc); border-color: var(--acc); box-shadow: 0 0 0 5px var(--accsoft); animation: pulse 1s infinite; }
+.done .dot { color: #fff; background: var(--ok); border-color: var(--ok); }
+.error .dot { color: #fff; background: var(--err); border-color: var(--err); }
+
+.step span { flex: 1; min-width: 0; font-weight: 500; }
+.step.pending span { color: var(--mut); }
+.step.running span { font-weight: 600; }
+.step small { font-size: 12px; color: var(--mut); font-variant-numeric: tabular-nums; }
+
+.errbox {
+  max-height: 260px;
+  margin-top: 14px;
+  padding: 12px 14px;
+  overflow: auto;
+  font: 12px/1.55 var(--mono);
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: color-mix(in srgb, var(--err) 9%, var(--card));
+  border: 1px solid color-mix(in srgb, var(--err) 55%, var(--line));
+  border-radius: 13px;
+}
+
+.grp {
+  margin-top: 14px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+}
+
+.grp.warn {
+  background: color-mix(in srgb, var(--warn) 7%, var(--card));
+  border-color: color-mix(in srgb, var(--warn) 35%, var(--line));
+}
+
+.grp.info {
+  background: color-mix(in srgb, var(--info) 7%, var(--card));
+  border-color: color-mix(in srgb, var(--info) 30%, var(--line));
+}
+
+.grp h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 8px;
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--mut);
+}
+
+.grp h3 span {
+  padding: 0 8px;
+  font-size: 11px;
+  color: var(--ink);
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 99px;
+}
+
+.grp div {
+  padding: 7px 0;
+  font-size: 13px;
+  word-break: break-word;
+  border-top: 1px solid color-mix(in srgb, var(--line) 70%, transparent);
+}
+
+.grp h3 + div { border-top: 0; padding-top: 0; }
+
+.row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 18px; }
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 10px;
+  margin: 0 0 18px;
+}
+
+.facts div {
+  padding: 11px 13px;
+  background: var(--card2);
+  border: 1px solid var(--line);
+  border-radius: 13px;
+}
+
+.facts small { display: block; font-size: 11px; font-weight: 600; color: var(--mut); }
+
+.facts b {
+  display: block;
+  margin-top: 2px;
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -.01em;
+  font-variant-numeric: tabular-nums;
+}
+
+.sevgrp { margin-top: 14px; }
+.sevgrp:first-child { margin-top: 0; }
+
+.sevgrp h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 8px;
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--mut);
+}
+
+.find {
+  display: flex;
+  gap: 11px;
+  align-items: flex-start;
+  margin-bottom: 6px;
+  padding: 11px 13px;
+  background: var(--card2);
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--sv, var(--mut));
+  border-radius: 12px;
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
+}
+
+.find:hover { background: var(--accsoft); }
+.find.high { --sv: var(--err); }
+.find.medium { --sv: var(--warn); }
+.find.low { --sv: var(--info); }
+
+.find input {
+  appearance: none;
+  -webkit-appearance: none;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  margin: 2px 0 0;
+  background: var(--card);
+  border: 1.5px solid var(--mut);
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all .15s;
+}
+
+.find input::after {
+  content: "";
+  width: 9px;
+  height: 5px;
+  border-left: 2px solid var(--onacc);
+  border-bottom: 2px solid var(--onacc);
+  transform: rotate(-45deg) translate(1px, -1px) scale(0);
+  transition: transform .12s;
+}
+
+.find input:checked { background: var(--acc); border-color: var(--acc); }
+.find input:checked::after { transform: rotate(-45deg) translate(1px, -1px) scale(1); }
+.find input:focus-visible { outline: 0; box-shadow: 0 0 0 4px var(--accsoft); }
+
+.fb { flex: 1; min-width: 0; }
+
+.ft {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.ft code {
+  font: 500 12px var(--mono);
+  word-break: break-all;
+}
+
+.fr { font-size: 12px; color: var(--mut); }
+
+.fs {
+  margin: 6px 0 0;
+  padding: 8px 10px;
+  overflow: auto;
+  color: var(--termink);
+  font: 11.5px/1.5 var(--mono);
+  white-space: pre-wrap;
+  word-break: break-all;
+  background: var(--term);
+  border-radius: 9px;
+}
+
+.term { overflow: hidden; background: var(--term); border: 1px solid var(--line); border-radius: 15px; }
+
+.tbar {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, .04);
+  border-bottom: 1px solid rgba(255, 255, 255, .06);
+}
+
+.tbar i { width: 11px; height: 11px; background: #ff5f57; border-radius: 50%; }
+.tbar i:nth-child(2) { background: #febc2e; }
+.tbar i:nth-child(3) { background: #28c840; }
+
+.tbar em {
+  margin-left: 8px;
+  font-style: normal;
+  font-size: 11.5px;
+  color: #7a9690;
+  font-family: var(--mono);
+}
+
+.log {
+  height: min(52vh, 460px);
+  min-height: 260px;
+  padding: 14px 16px;
+  overflow: auto;
+  color: var(--termink);
+  font: 12px/1.6 var(--mono);
+}
+
+.ln { white-space: pre-wrap; word-break: break-word; }
+.ln.h { margin-top: 6px; color: #7ee0d2; font-weight: 600; }
+.ln.c { color: #8bd5a0; }
+.ln.w { color: #ffc86b; }
+.ln.e { color: #ff7b7b; }
+.ln.n { color: #7dd3fc; }
+
+.log::-webkit-scrollbar, .list::-webkit-scrollbar, .errbox::-webkit-scrollbar, .fs::-webkit-scrollbar { width: 9px; height: 9px; }
+
+.log::-webkit-scrollbar-thumb, .list::-webkit-scrollbar-thumb, .errbox::-webkit-scrollbar-thumb, .fs::-webkit-scrollbar-thumb {
+  background: rgba(128, 150, 145, .4);
+  background-clip: padding-box;
+  border: 2px solid transparent;
+  border-radius: 9px;
+}
+
+.concl {
+  --vc: var(--mut);
+  position: relative;
+  overflow: hidden;
+  padding: 22px 22px 22px 26px;
+}
+
+.concl.v-ok { --vc: var(--ok); }
+.concl.v-warn { --vc: var(--warn); }
+.concl.v-bad { --vc: var(--err); }
+.concl.v-info { --vc: var(--info); }
+
+.concl::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 5px;
+  background: linear-gradient(180deg, var(--vc), color-mix(in srgb, var(--vc) 40%, transparent));
+}
+
+.concl::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(460px 180px at 100% 0, color-mix(in srgb, var(--vc) 14%, transparent), transparent 70%);
+}
+
+.concl > * { position: relative; z-index: 1; }
+
+.chead { display: flex; align-items: center; gap: 14px; }
+
+.cicon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 46px;
+  height: 46px;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--vc);
+  background: color-mix(in srgb, var(--vc) 13%, var(--card));
+  border: 1px solid color-mix(in srgb, var(--vc) 38%, var(--line));
+  border-radius: 15px;
+  box-shadow: 0 6px 16px color-mix(in srgb, var(--vc) 20%, transparent);
+}
+
+.cht { flex: 1; min-width: 0; }
+
+.cht small {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: var(--mut);
+}
+
+.cht h3 {
+  margin: 2px 0 0;
+  font-size: 19px;
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -.02em;
+}
+
+.cbadge {
+  flex: none;
+  padding: 4px 12px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--vc);
+  white-space: nowrap;
+  background: color-mix(in srgb, var(--vc) 11%, var(--card));
+  border: 1px solid color-mix(in srgb, var(--vc) 38%, var(--line));
+  border-radius: 99px;
+}
+
+.ctext {
+  margin: 16px 0 0;
+  font-size: 14.5px;
+  line-height: 1.75;
+  color: var(--ink);
+}
+
+.cfacts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.cfacts div {
+  padding: 11px 13px;
+  background: var(--card2);
+  border: 1px solid var(--line);
+  border-radius: 13px;
+}
+
+.cfacts small {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--mut);
+}
+
+.cfacts b {
+  display: block;
+  margin-top: 2px;
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -.01em;
+  font-variant-numeric: tabular-nums;
+}
+
+.cissues {
+  margin-top: 16px;
+  padding: 13px 15px;
+  background: color-mix(in srgb, var(--vc) 6%, var(--card));
+  border: 1px solid color-mix(in srgb, var(--vc) 28%, var(--line));
+  border-radius: 13px;
+}
+
+.cissues h4 {
+  margin: 0 0 8px;
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--mut);
+}
+
+.cissues ul { display: grid; gap: 7px; margin: 0; padding: 0; list-style: none; }
+
+.cissues li {
+  position: relative;
+  padding-left: 18px;
+  font-size: 13px;
+  line-height: 1.55;
+  word-break: break-word;
+}
+
+.cissues li::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: .55em;
+  width: 7px;
+  height: 7px;
+  background: var(--vc);
+  border-radius: 50%;
+}
+
+.cempty {
+  padding: 26px 10px;
+  font-size: 13px;
+  text-align: center;
+  color: var(--mut);
+  border: 1px dashed var(--line);
+  border-radius: 13px;
+}
+
+body .swal2-container { backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+
+body .swal2-popup.sw-popup {
+  padding: 1.6rem;
+  font-family: inherit;
+  color: var(--ink);
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+}
+
+body .swal2-title.sw-title { font-size: 1.15rem; font-weight: 700; color: var(--ink); }
+body .swal2-html-container.sw-text { font-size: .9rem; color: var(--mut); }
+body .swal2-actions.sw-actions { gap: 10px; }
+
+body .swal2-popup.swal2-toast.sw-toast {
+  color: var(--ink);
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+}
+
+body .swal2-popup.swal2-toast .swal2-title { color: var(--ink); font-size: .9rem; }
+
+.sw-pre {
+  max-height: 50vh;
+  margin: 0;
+  padding: 14px;
+  overflow: auto;
+  text-align: left;
+  color: var(--termink);
+  font: 12px/1.55 var(--mono);
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: var(--term);
+  border: 1px solid var(--line);
+  border-radius: 13px;
+}
+
+@keyframes pulse { 50% { opacity: .45; } }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+@media (max-width: 1020px) {
+  main { grid-template-columns: 1fr; gap: 18px; padding-top: 18px; }
+  .col { gap: 18px; }
+  .log { height: min(46vh, 380px); }
+}
+
+@media (max-width: 760px) {
+  header { flex-wrap: wrap; }
+  .tabs { order: 3; width: 100%; }
+  .tab { flex: 1; justify-content: center; }
+}
+
+@media (max-width: 560px) {
+  header { padding-top: 12px; padding-bottom: 12px; }
+  .sub { display: none; }
+  .card { padding: 16px; border-radius: 16px; }
+  .concl { padding: 18px 16px 18px 20px; }
+  .cht h3 { font-size: 17px; }
+  .cbadge { display: none; }
+  input[type=text] { font-size: 16px; }
+  .row button { flex: 1; }
+  .tags .tag:nth-child(n+4) { display: none; }
+  .step { gap: 12px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <div class="logo">P</div>
+    <div>
+      <h1>PHPSiteCare</h1>
+      <div class="sub" id="sub">Automated migration, repair and verification of laravel sites</div>
+    </div>
+  </div>
+  <nav class="tabs" role="tablist">
+    <button class="tab on" id="tab-migrator" type="button" role="tab" data-v="migrator" aria-selected="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+      Migrator
+    </button>
+    <button class="tab" id="tab-malware" type="button" role="tab" data-v="malware" aria-selected="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 5 3.4 8.4 8 9 4.6-.6 8-4 8-9V6z"/><path d="m9 12 2 2 4-4"/></svg>
+      Malware
+    </button>
+  </nav>
+  <div class="hright">
+    <button class="iconbtn" id="theme" type="button" aria-label="Toggle theme" title="Toggle theme">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    </button>
+  </div>
+</header>
+
+<main id="view-migrator">
+  <div class="col">
+    <div class="card">
+      <div class="ch"><h2>Migrate a project</h2></div>
+      <label for="project">Project folder name or absolute path</label>
+      <input type="text" id="project" list="plist" placeholder="thedevkrew" autocomplete="off" autocapitalize="off" spellcheck="false">
+      <datalist id="plist"></datalist>
+      <label for="base_url">Base URL of this project</label>
+      <input type="text" id="base_url" placeholder="https://upgradephp.supporthives.com/thedevkrew" autocomplete="off" autocapitalize="off" spellcheck="false">
+      <label for="extra_paths">Extra paths to test (comma separated)</label>
+      <input type="text" id="extra_paths" placeholder="products, login" autocomplete="off" autocapitalize="off" spellcheck="false">
+      <div class="opts">
+        <label class="chk"><input type="checkbox" id="dry_run"><span>Preflight only</span></label>
+        <label class="chk"><input type="checkbox" id="repair"><span>Already on Laravel 12: apply remaining fixes only (auto-detected)</span></label>
+        <label class="chk"><input type="checkbox" id="skip_missing" checked><span>Skip route files whose controllers are all missing</span></label>
+      </div>
+      <button class="startbtn" id="start" type="button">Start migration</button>
+      <button class="ghost startbtn" id="patch" type="button">Patch existing upgraded site</button>
+      <div class="info" id="info"></div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><h2>Detected projects</h2><span class="count" id="pcount">0</span></div>
+      <div id="projects" class="list"></div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><h2>History</h2><span class="count" id="hcount">0</span></div>
+      <div id="history" class="list"></div>
+    </div>
+  </div>
+
+  <div class="col">
+    <div class="card">
+      <div class="ch">
+        <div class="jt"><h2 id="jtitle">Progress</h2></div>
+        <span class="pill" id="jstatus"></span>
+      </div>
+      <div class="pr"><div class="bar"><i id="pbar" style="width:0"></i></div><span class="pct" id="pct">0%</span></div>
+      <div class="steps" id="steps"></div>
+      <div id="errs"></div>
+      <div id="warns"></div>
+      <div id="notes"></div>
+      <div class="row">
+        <button class="ghost" id="rb" type="button" disabled>Rollback this run</button>
+        <button class="ghost" id="allerr" type="button">Error log</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><h2>Live log</h2></div>
+      <div class="term">
+        <div class="tbar"><i></i><i></i><i></i><em>job.log</em></div>
+        <div class="log" id="log" role="log" aria-live="off"></div>
+      </div>
+    </div>
+
+    <div class="card concl" id="concl">
+      <div class="ch"><h2>Final conclusion</h2></div>
+      <div class="cempty">Start a migration or open a run from History to see its conclusion here.</div>
+    </div>
+  </div>
+</main>
+
+<main id="view-malware" hidden>
+  <div class="col">
+    <div class="card">
+      <div class="ch"><h2>Scan a project</h2></div>
+      <label for="mproject">Folder name, absolute path, or * for all folders</label>
+      <input type="text" id="mproject" list="plist" placeholder="thedevkrew" autocomplete="off" autocapitalize="off" spellcheck="false">
+      <label for="m_exclude">Skip these folders when scanning all folders (comma separated)</label>
+      <input type="text" id="m_exclude" placeholder="PixelPulz, DesignPixis" autocomplete="off" autocapitalize="off" spellcheck="false">
+      <div class="opts">
+        <label class="chk"><input type="checkbox" id="m_deep"><span>Deep scan: include vendor and storage folders</span></label>
+        <label class="chk"><input type="checkbox" id="m_uploads" checked><span>Scan public uploads for executable files</span></label>
+      </div>
+      <button class="startbtn" id="mstart" type="button">Start scan</button>
+      <button class="ghost startbtn" id="mfolders" type="button">Scan all folders</button>
+    </div>
+
+    <div class="card">
+      <div class="ch"><h2>Detected projects</h2><span class="count" id="mpcount">0</span></div>
+      <div id="mprojects" class="list"></div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><h2>Scan history</h2><span class="count" id="mhcount">0</span></div>
+      <div id="mhistory" class="list"></div>
+    </div>
+  </div>
+
+  <div class="col">
+    <div class="card">
+      <div class="ch">
+        <div class="jt"><h2 id="mtitle">Scan progress</h2></div>
+        <span class="pill" id="mstatus"></span>
+      </div>
+      <div class="pr"><div class="bar"><i id="mbar" style="width:0"></i></div><span class="pct" id="mpct">0%</span></div>
+      <div class="facts" id="mfacts"></div>
+      <div id="merr"></div>
+      <div class="row" id="mstoprow" hidden>
+        <button class="danger" id="mstop" type="button">Stop scan</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><h2>Findings</h2><span class="count" id="fcount">0</span></div>
+      <div id="findings"><div class="empty">Start a scan or open one from history to see findings here.</div></div>
+      <div class="row">
+        <button class="danger" id="mquar" type="button" disabled>Quarantine selected</button>
+        <button class="ghost" id="mall" type="button" disabled>Select all</button>
+        <button class="ghost" id="mrescan" type="button" disabled>Rescan</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><h2>Live log</h2></div>
+      <div class="term">
+        <div class="tbar"><i></i><i></i><i></i><em>scan.log</em></div>
+        <div class="log" id="mlog" role="log" aria-live="off"></div>
+      </div>
+    </div>
+
+    <div class="card concl" id="mconcl">
+      <div class="ch"><h2>Final conclusion</h2></div>
+      <div class="cempty">Start a scan or open one from history to see its conclusion here.</div>
+    </div>
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.5/dist/sweetalert2.all.min.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+const B = location.pathname.endsWith("/") ? location.pathname : location.pathname + "/";
+const root = document.documentElement;
+const ANSI = /\u001b?\[(?:\d{1,3}(?:;\d{1,3})*)m/g;
+const ACTIVE = ["running", "queued"];
+const FINISHED = ["done", "done_with_warnings", "failed", "interrupted"];
+const SCAN_FINISHED = ["clean", "infected", "failed", "interrupted", "stopped"];
+const SEVERITIES = ["high", "medium", "low"];
+const MAX_LINES = 6000;
+const VIEWS = ["migrator", "malware"];
+const SUBS = {
+  migrator: "Automated migration, repair and verification of laravel sites",
+  malware: "Scan laravel sites for malware, backdoors and suspicious files"
+};
+const SESSION_KEY = "upgrader-session";
+const TEXT_FIELDS = ["project", "base_url", "extra_paths", "mproject", "m_exclude"];
+const CHECK_FIELDS = ["dry_run", "repair", "skip_missing", "m_deep", "m_uploads"];
+const seen = new Set();
+const announced = new Set();
+const picked = new Set();
+let cur = null;
+let timer = null;
+let mcur = null;
+let mtimer = null;
+let mproject = "";
+let findingsKey = "";
+
+const loadSession = () => {
+  try {
+    const s = JSON.parse(sessionStorage.getItem(SESSION_KEY) || "{}");
+    return s && typeof s === "object" ? s : {};
+  } catch (e) {
+    return {};
+  }
+};
+
+const sess = loadSession();
+
+const saveSession = patch => {
+  Object.assign(sess, patch);
+  try { sessionStorage.setItem(SESSION_KEY, JSON.stringify(sess)); } catch (e) {}
+};
+
+const saveForm = () => {
+  const form = {};
+  TEXT_FIELDS.forEach(id => { form[id] = $(id).value; });
+  CHECK_FIELDS.forEach(id => { form[id] = $(id).checked; });
+  saveSession({ form });
+};
+
+const applyForm = () => {
+  const form = sess.form;
+  if (!form || typeof form !== "object") return;
+  TEXT_FIELDS.forEach(id => { if (typeof form[id] === "string") $(id).value = form[id]; });
+  CHECK_FIELDS.forEach(id => { if (typeof form[id] === "boolean") $(id).checked = form[id]; });
+};
+
+const markSelected = () => {
+  const mig = $("project").value.trim();
+  const mal = $("mproject").value.trim();
+  document.querySelectorAll("#projects .proj").forEach(e => e.classList.toggle("sel", !!mig && e.dataset.n === mig));
+  document.querySelectorAll("#mprojects .proj").forEach(e => e.classList.toggle("sel", !!mal && e.dataset.n === mal));
+  document.querySelectorAll(".hist[data-i]").forEach(e => e.classList.toggle("sel", !!cur && e.dataset.i === cur));
+  document.querySelectorAll(".hist[data-s]").forEach(e => e.classList.toggle("sel", !!mcur && e.dataset.s === mcur));
+};
+
+const api = (p, o = {}) => fetch(B + p, { ...o, headers: { "Content-Type": "application/json" } });
+const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+const readJson = async r => { try { return await r.json(); } catch (e) { return { detail: "Server returned " + r.status }; } };
+const detail = e => typeof e.detail === "string" ? e.detail : JSON.stringify(e.detail || e);
+const cls = s => ["done", "done_with_warnings", "clean"].includes(s) ? "ok" : ["failed", "interrupted", "infected"].includes(s) ? "err" : ["running", "stopped"].includes(s) ? "warn" : "";
+
+const sw = () => window.Swal && Swal.mixin({
+  buttonsStyling: false,
+  reverseButtons: true,
+  customClass: {
+    popup: "sw-popup",
+    title: "sw-title",
+    htmlContainer: "sw-text",
+    actions: "sw-actions",
+    confirmButton: "sw-btn",
+    cancelButton: "sw-btn ghost"
+  }
+});
+
+const toast = (icon, title) => {
+  if (!window.Swal) return;
+  Swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    timer: 3800,
+    timerProgressBar: true,
+    customClass: { popup: "sw-toast" }
+  }).fire({ icon, title });
+};
+
+const alertBox = o => {
+  if (!window.Swal) {
+    window.alert(o.plain || o.text || o.title);
+    return Promise.resolve();
+  }
+  return sw().fire({ icon: o.icon, title: o.title, text: o.text, html: o.html, width: o.width, confirmButtonText: "OK" });
+};
+
+const confirmBox = async o => {
+  if (!window.Swal) return window.confirm(o.title + (o.text ? "\n" + o.text : ""));
+  const r = await sw().fire({
+    icon: o.icon || "question",
+    title: o.title,
+    text: o.text,
+    showCancelButton: true,
+    confirmButtonText: o.ok || "Confirm",
+    cancelButtonText: "Cancel"
+  });
+  return r.isConfirmed;
+};
+
+try {
+  const t = localStorage.getItem("upgrader-theme");
+  if (t === "light" || t === "dark") root.dataset.theme = t;
+} catch (e) {}
+
+$("theme").onclick = () => {
+  const dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme:dark)").matches;
+  const n = dark ? "light" : "dark";
+  root.dataset.theme = n;
+  try { localStorage.setItem("upgrader-theme", n); } catch (e) {}
+};
+
+function showView(name) {
+  const v = VIEWS.includes(name) ? name : "migrator";
+  VIEWS.forEach(x => {
+    $("view-" + x).hidden = x !== v;
+    const t = $("tab-" + x);
+    t.classList.toggle("on", x === v);
+    t.setAttribute("aria-selected", x === v ? "true" : "false");
+  });
+  $("sub").textContent = SUBS[v];
+  saveSession({ view: v });
+  if (v === "malware" && !mloaded) {
+    mloaded = true;
+    loadMalwareHistory();
+  }
+}
+
+let mloaded = false;
+
+document.querySelectorAll(".tab").forEach(t => t.onclick = () => {
+  if (location.hash !== "#" + t.dataset.v) location.hash = t.dataset.v;
+  else showView(t.dataset.v);
+});
+
+window.addEventListener("hashchange", () => showView(location.hash.slice(1)));
+
+function makeLog(id) {
+  const el = $(id);
+  let off = 0;
+  let carry = "";
+  const lineClass = l => {
+    if (/^\d\d:\d\d:\d\d --- /.test(l)) return "h";
+    if (/^\d\d:\d\d:\d\d ERROR/.test(l)) return "e";
+    if (/^\d\d:\d\d:\d\d WARNING/.test(l)) return "w";
+    if (/^\d\d:\d\d:\d\d NOTE/.test(l)) return "n";
+    if (/^\d\d:\d\d:\d\d \$ /.test(l)) return "c";
+    return "";
+  };
+  return {
+    get off() { return off; },
+    set off(v) { off = v; },
+    reset() {
+      off = 0;
+      carry = "";
+      el.innerHTML = "";
+    },
+    feed(text, flush) {
+      const atEnd = el.scrollTop + el.clientHeight >= el.scrollHeight - 30;
+      const parts = (carry + text.replace(ANSI, "")).split("\n");
+      carry = flush ? "" : parts.pop();
+      if (flush && parts[parts.length - 1] === "") parts.pop();
+      if (!parts.length) return;
+      const frag = document.createDocumentFragment();
+      parts.forEach(l => {
+        const d = document.createElement("div");
+        d.className = "ln " + lineClass(l);
+        d.textContent = l === "" ? "\u00a0" : l;
+        frag.appendChild(d);
+      });
+      el.appendChild(frag);
+      while (el.childElementCount > MAX_LINES) el.removeChild(el.firstChild);
+      if (atEnd) el.scrollTop = el.scrollHeight;
+    }
+  };
+}
+
+const jobLog = makeLog("log");
+const scanLog = makeLog("mlog");
+
+function group(title, items, icon, kind) {
+  if (!items.length) return "";
+  return `<div class="grp ${kind}"><h3>${title}<span>${items.length}</span></h3>${items.map(x => `<div>${icon} ${esc(x)}</div>`).join("")}</div>`;
+}
+
+const CV = {
+  ok: { icon: "✓", label: "Success" },
+  warn: { icon: "!", label: "Check needed" },
+  bad: { icon: "✕", label: "Not running" },
+  info: { icon: "i", label: "Notice" }
+};
+
+function renderConclusion(box, j, label) {
+  const c = j.conclusion;
+  if (!c) {
+    box.className = "card concl";
+    const msg = ACTIVE.includes(j.status)
+      ? "The conclusion will appear here when the " + label + " finishes."
+      : "No conclusion is available for this " + label + ".";
+    box.innerHTML = `<div class="ch"><h2>Final conclusion</h2></div><div class="cempty">${msg}</div>`;
+    return;
+  }
+  const v = CV[c.verdict] || CV.info;
+  box.className = "card concl v-" + (CV[c.verdict] ? c.verdict : "info");
+  const facts = (c.facts || []).map(f => `<div><small>${esc(f[0])}</small><b>${esc(f[1])}</b></div>`).join("");
+  const issues = (c.issues || []).length
+    ? `<div class="cissues"><h4>Things to check</h4><ul>${c.issues.map(x => `<li>${esc(x)}</li>`).join("")}</ul></div>`
+    : "";
+  box.innerHTML = `
+    <div class="chead">
+      <div class="cicon">${v.icon}</div>
+      <div class="cht"><small>Final conclusion</small><h3>${esc(c.title)}</h3></div>
+      <span class="cbadge">${v.label}</span>
+    </div>
+    <p class="ctext">${esc(c.text)}</p>
+    ${facts ? `<div class="cfacts">${facts}</div>` : ""}
+    ${issues}`;
+}
+
+function projectRows(d) {
+  return d.map(p => `
+    <div class="proj" data-n="${esc(p.name)}">
+      <div class="pi">${esc(p.name.charAt(0).toUpperCase())}</div>
+      <b>${esc(p.name)}</b>
+      <div class="tags">
+        <span class="tag">${esc(p.laravel)}</span>
+        ${p.migrated ? '<span class="tag ok">12</span>' : ""}
+        ${p.patched ? '<span class="tag info">patched</span>' : ""}
+        ${p.last ? `<span class="tag ${cls(p.last)}">${esc(p.last)}</span>` : ""}
+      </div>
+    </div>`).join("") || '<div class="empty">No Laravel projects found in the projects root</div>';
+}
+
+async function boot() {
+  try {
+    const s = await (await api("api/state")).json();
+    $("info").textContent = `Projects root: ${s.root} · PHP: ${s.php} · Composer: ${s.composer}`;
+    await loadProjects();
+    await loadHistory();
+  } catch (e) {
+    toast("error", "Could not reach the upgrader API");
+  }
+}
+
+async function loadProjects() {
+  const d = await (await api("api/projects")).json();
+  $("plist").innerHTML = d.map(p => `<option value="${esc(p.name)}">`).join("");
+  $("pcount").textContent = d.length;
+  $("mpcount").textContent = d.length;
+  $("projects").innerHTML = projectRows(d);
+  $("mprojects").innerHTML = projectRows(d);
+  document.querySelectorAll("#projects .proj").forEach(e => e.onclick = () => {
+    $("project").value = e.dataset.n;
+    saveForm();
+    markSelected();
+  });
+  document.querySelectorAll("#mprojects .proj").forEach(e => e.onclick = () => {
+    $("mproject").value = e.dataset.n;
+    saveForm();
+    markSelected();
+  });
+  markSelected();
+}
+
+async function loadHistory() {
+  const d = await (await api("api/jobs")).json();
+  $("hcount").textContent = d.length;
+  $("history").innerHTML = d.map(j => `
+    <div class="hist" data-i="${esc(j.id)}">
+      <span><b>${esc(j.project)}</b><small>${esc(j.id)}${j.patch ? " · patch" : ""}</small></span>
+      <span class="tag ${cls(j.status)}">${esc(j.status)}</span>
+    </div>`).join("") || '<div class="empty">No runs yet</div>';
+  document.querySelectorAll(".hist[data-i]").forEach(e => e.onclick = () => openJob(e.dataset.i));
+  markSelected();
+}
+
+function announce(j) {
+  const what = j.opts && j.opts.patch ? "Patch" : "Migration";
+  if (j.status === "done") {
+    toast("success", `${what} finished with no warnings`);
+  } else if (j.status === "done_with_warnings") {
+    toast("warning", `Finished with ${j.warnings.length} warning(s)`);
+  } else if (j.status === "failed") {
+    const bad = j.steps.find(s => s.status === "error");
+    const msg = bad ? bad.title + "\n" + bad.error : "The run failed";
+    alertBox({
+      icon: "error",
+      title: j.rolled_back ? "Run failed and was rolled back" : "Run failed",
+      html: `<pre class="sw-pre">${esc(msg.slice(0, 1200))}</pre>`,
+      plain: msg,
+      width: "min(720px, 94vw)"
+    });
+  } else if (j.status === "interrupted") {
+    toast("error", "The run was interrupted");
+  }
+}
+
+function openJob(id) {
+  cur = id;
+  saveSession({ job: id });
+  markSelected();
+  jobLog.reset();
+  clearInterval(timer);
+  tick();
+  timer = setInterval(tick, 1000);
+}
+
+async function tick() {
+  if (!cur) return;
+  const jr = await api("api/jobs/" + cur);
+  if (!jr.ok) {
+    clearInterval(timer);
+    cur = null;
+    saveSession({ job: null });
+    markSelected();
+    return;
+  }
+  const j = await jr.json();
+  const active = ACTIVE.includes(j.status);
+  $("jtitle").textContent = j.project;
+  const pill = $("jstatus");
+  pill.textContent = j.status.replace(/_/g, " ") + (j.rolled_back ? " · rolled back" : "");
+  pill.className = "pill show " + cls(j.status) + (j.status === "running" ? " live" : "");
+  const n = j.steps.length;
+  const d = j.steps.filter(s => s.status === "done").length;
+  const pc = n ? Math.round(d / n * 100) : 0;
+  $("pbar").style.width = pc + "%";
+  $("pct").textContent = pc + "%";
+  $("steps").innerHTML = j.steps.map((s, i) => `
+    <div class="step ${s.status}">
+      <div class="dot">${s.status === "done" ? "✓" : s.status === "error" ? "!" : i + 1}</div>
+      <span>${esc(s.title)}</span>
+      <small>${s.secs ? s.secs + "s" : ""}</small>
+    </div>`).join("");
+  const bad = j.steps.find(s => s.status === "error");
+  $("errs").innerHTML = bad ? `<div class="errbox">${esc(bad.title)}\n${esc(bad.error)}</div>` : "";
+  $("warns").innerHTML = group("Needs attention", j.warnings || [], "⚠", "warn");
+  $("notes").innerHTML = group("Good to know", j.notes || [], "ℹ", "info");
+  renderConclusion($("concl"), j, "run");
+  $("rb").disabled = !(FINISHED.includes(j.status) && j.actions > 0 && !j.rolled_back);
+  const r = await api(`api/jobs/${cur}/log?offset=${jobLog.off}`);
+  const t = await r.text();
+  if (t) jobLog.off = +r.headers.get("X-Next");
+  if (t || !active) jobLog.feed(t, !active);
+  if (active) {
+    seen.add(j.id);
+    return;
+  }
+  clearInterval(timer);
+  loadProjects();
+  loadHistory();
+  if (seen.has(j.id) && !announced.has(j.id)) {
+    announced.add(j.id);
+    announce(j);
+  }
+}
+
+async function launch(patch) {
+  const project = $("project").value.trim();
+  if (!project) {
+    alertBox({ icon: "info", title: "Choose a project", text: "Enter a project folder name or pick one from the detected list." });
+    return;
+  }
+  const what = patch ? "patch" : "migration";
+  if (patch) {
+    const ok = await confirmBox({
+      icon: "question",
+      title: "Patch this upgraded site?",
+      text: "Handler.php, Controller.php and the route files are updated for Laravel 12. Backups are kept and the run can be rolled back.",
+      ok: "Yes, patch"
+    });
+    if (!ok) return;
+  }
+  const b = {
+    project,
+    base_url: $("base_url").value,
+    extra_paths: $("extra_paths").value,
+    dry_run: $("dry_run").checked,
+    repair: $("repair").checked,
+    skip_missing: $("skip_missing").checked,
+    patch
+  };
+  const btn = $(patch ? "patch" : "start");
+  btn.disabled = true;
+  btn.classList.add("busy");
+  try {
+    const r = await api("api/jobs", { method: "POST", body: JSON.stringify(b) });
+    const j = await readJson(r);
+    if (!r.ok) {
+      alertBox({ icon: "error", title: `Could not start the ${what}`, text: detail(j) });
+      return;
+    }
+    toast("info", patch ? "Patch started" : "Migration started");
+    loadHistory();
+    openJob(j.id);
+  } catch (e) {
+    alertBox({ icon: "error", title: `Could not start the ${what}`, text: String(e) });
+  } finally {
+    btn.disabled = false;
+    btn.classList.remove("busy");
+  }
+}
+
+$("start").onclick = () => launch(false);
+$("patch").onclick = () => launch(true);
+
+$("project").addEventListener("keydown", e => {
+  if (e.key === "Enter") $("start").click();
+});
+
+$("rb").onclick = async () => {
+  if (!cur) return;
+  const ok = await confirmBox({
+    icon: "warning",
+    title: "Roll back this run?",
+    text: "Every change made by this run will be undone.",
+    ok: "Yes, roll back"
+  });
+  if (!ok) return;
+  const r = await api(`api/jobs/${cur}/rollback`, { method: "POST" });
+  if (!r.ok) {
+    alertBox({ icon: "error", title: "Rollback failed", text: detail(await readJson(r)) });
+    return;
+  }
+  toast("success", "Run rolled back");
+  jobLog.reset();
+  tick();
+  loadHistory();
+  loadProjects();
+};
+
+$("allerr").onclick = async () => {
+  const t = (await (await api("api/errors")).text()).trim();
+  alertBox({
+    icon: "info",
+    title: "Error log",
+    html: `<pre class="sw-pre">${esc(t || "No errors recorded")}</pre>`,
+    plain: t || "No errors recorded",
+    width: "min(760px, 94vw)"
+  });
+};
+
+async function loadMalwareHistory() {
+  try {
+    const d = await (await api("api/malware/scans")).json();
+    $("mhcount").textContent = d.length;
+    $("mhistory").innerHTML = d.map(j => `
+      <div class="hist" data-s="${esc(j.id)}">
+        <span><b>${esc(j.project)}</b><small>${esc(j.id)}</small></span>
+        <span class="tag ${cls(j.status)}">${esc(j.status)}${j.findings ? " · " + esc(j.findings) : ""}</span>
+      </div>`).join("") || '<div class="empty">No scans yet</div>';
+    document.querySelectorAll(".hist[data-s]").forEach(e => e.onclick = () => openScan(e.dataset.s));
+    markSelected();
+  } catch (e) {
+    toast("error", "Could not load scan history");
+  }
+}
+
+const savePicked = () => saveSession({ picked: [...picked] });
+
+function updatePickButtons(finished, count) {
+  $("mquar").disabled = !(finished && picked.size > 0);
+  $("mall").disabled = !(finished && count > 0);
+  $("mall").textContent = count > 0 && picked.size === count ? "Clear selection" : "Select all";
+  $("mrescan").disabled = !(finished && mproject);
+}
+
+function renderFindings(j) {
+  const list = j.findings || [];
+  const finished = SCAN_FINISHED.includes(j.status);
+  $("fcount").textContent = list.length;
+  if (finished) {
+    const names = new Set(list.map(f => f.file));
+    let pruned = false;
+    [...picked].forEach(f => {
+      if (!names.has(f)) {
+        picked.delete(f);
+        pruned = true;
+      }
+    });
+    if (pruned) savePicked();
+  }
+  const key = j.id + ":" + list.length + ":" + j.status;
+  if (key !== findingsKey) {
+    findingsKey = key;
+    if (!list.length) {
+      const msg = ACTIVE.includes(j.status)
+        ? "Scanning, findings appear here as they are detected."
+        : j.status === "clean" ? "No suspicious files were found."
+        : j.status === "stopped" ? "The scan was stopped before it found anything." : "No findings for this scan.";
+      $("findings").innerHTML = `<div class="empty">${msg}</div>`;
+    } else {
+      $("findings").innerHTML = SEVERITIES.map(sv => {
+        const items = list.filter(f => (f.severity || "low") === sv);
+        if (!items.length) return "";
+        return `<div class="sevgrp"><h3>${sv}<span class="count">${items.length}</span></h3>${items.map(f => `
+          <label class="find ${sv}">
+            <input type="checkbox" data-f="${esc(f.file)}"${picked.has(f.file) ? " checked" : ""}>
+            <div class="fb">
+              <div class="ft"><code>${esc(f.file)}${f.line ? ":" + esc(f.line) : ""}</code><span class="tag ${sv === "high" ? "err" : sv === "medium" ? "warn" : "info"}">${esc(f.rule || "rule")}</span></div>
+              ${f.abs ? `<div class="fr"><code>${esc(f.abs)}</code></div>` : ""}
+              ${f.reason ? `<div class="fr">${esc(f.reason)}</div>` : ""}
+              ${f.snippet ? `<pre class="fs">${esc(f.snippet)}</pre>` : ""}
+            </div>
+          </label>`).join("")}</div>`;
+      }).join("");
+    }
+  }
+  updatePickButtons(finished, new Set(list.map(f => f.file)).size);
+}
+
+function openScan(id, restore) {
+  mcur = id;
+  if (!restore) {
+    picked.clear();
+    saveSession({ picked: [] });
+  }
+  saveSession({ scan: id });
+  markSelected();
+  findingsKey = "";
+  scanLog.reset();
+  clearInterval(mtimer);
+  mtick();
+  mtimer = setInterval(mtick, 1000);
+}
+
+function announceScan(j) {
+  const n = (j.findings || []).length;
+  if (j.status === "clean") toast("success", "Scan finished, no malware found");
+  else if (j.status === "infected") toast("warning", `Scan finished with ${n} finding(s)`);
+  else if (j.status === "failed") alertBox({ icon: "error", title: "Scan failed", text: j.error || "The scan could not be completed." });
+  else if (j.status === "interrupted") toast("error", "The scan was interrupted");
+  else if (j.status === "stopped") toast("warning", `Scan stopped, ${n} finding(s) so far`);
+}
+
+async function mtick() {
+  if (!mcur) return;
+  const jr = await api("api/malware/scans/" + mcur);
+  if (!jr.ok) {
+    clearInterval(mtimer);
+    mcur = null;
+    picked.clear();
+    saveSession({ scan: null, picked: [] });
+    markSelected();
+    return;
+  }
+  const j = await jr.json();
+  const active = ACTIVE.includes(j.status);
+  mproject = j.project;
+  $("mtitle").textContent = j.project;
+  const pill = $("mstatus");
+  pill.textContent = j.status.replace(/_/g, " ");
+  pill.className = "pill show " + cls(j.status) + (j.status === "running" ? " live" : "");
+  const pc = SCAN_FINISHED.includes(j.status) && j.status !== "stopped" ? 100 : Math.max(0, Math.min(100, Math.round(j.progress || 0)));
+  $("mstoprow").hidden = !active;
+  $("mbar").style.width = pc + "%";
+  $("mpct").textContent = pc + "%";
+  const list = j.findings || [];
+  const count = sv => list.filter(f => (f.severity || "low") === sv).length;
+  $("mfacts").innerHTML = [
+    ["Files scanned", j.files_scanned || 0],
+    ["High", count("high")],
+    ["Medium", count("medium")],
+    ["Low", count("low")]
+  ].map(f => `<div><small>${f[0]}</small><b>${esc(f[1])}</b></div>`).join("");
+  $("merr").innerHTML = j.error ? `<div class="errbox">${esc(j.error)}</div>` : "";
+  renderFindings(j);
+  renderConclusion($("mconcl"), j, "scan");
+  const r = await api(`api/malware/scans/${mcur}/log?offset=${scanLog.off}`);
+  const t = await r.text();
+  if (t) scanLog.off = +r.headers.get("X-Next");
+  if (t || !active) scanLog.feed(t, !active);
+  if (active) {
+    seen.add(j.id);
+    return;
+  }
+  clearInterval(mtimer);
+  loadMalwareHistory();
+  loadProjects();
+  if (seen.has(j.id) && !announced.has(j.id)) {
+    announced.add(j.id);
+    announceScan(j);
+  }
+}
+
+async function startScan(project) {
+  const b = { project, deep: $("m_deep").checked, uploads: $("m_uploads").checked, exclude: $("m_exclude").value };
+  try { localStorage.setItem("upgrader-exclude", $("m_exclude").value); } catch (e) {}
+  saveForm();
+  const btn = $("mstart");
+  btn.disabled = true;
+  btn.classList.add("busy");
+  try {
+    const r = await api("api/malware/scans", { method: "POST", body: JSON.stringify(b) });
+    const j = await readJson(r);
+    if (!r.ok) {
+      alertBox({ icon: "error", title: "Could not start the scan", text: detail(j) });
+      return;
+    }
+    toast("info", "Scan started");
+    loadMalwareHistory();
+    openScan(j.id);
+  } catch (e) {
+    alertBox({ icon: "error", title: "Could not start the scan", text: String(e) });
+  } finally {
+    btn.disabled = false;
+    btn.classList.remove("busy");
+  }
+}
+
+$("mstart").onclick = () => {
+  const project = $("mproject").value.trim();
+  if (!project) {
+    alertBox({ icon: "info", title: "Choose a project", text: "Enter a project folder name or pick one from the detected list." });
+    return;
+  }
+  startScan(project);
+};
+
+$("mproject").addEventListener("keydown", e => {
+  if (e.key === "Enter") $("mstart").click();
+});
+
+$("mfolders").onclick = () => {
+  $("mproject").value = "*";
+  saveForm();
+  markSelected();
+  startScan("*");
+};
+
+try {
+  const x = localStorage.getItem("upgrader-exclude");
+  if (x !== null) $("m_exclude").value = x;
+} catch (e) {}
+
+$("mrescan").onclick = () => {
+  if (mproject) startScan(mproject);
+};
+
+$("mstop").onclick = async () => {
+  if (!mcur) return;
+  const ok = await confirmBox({
+    icon: "warning",
+    title: "Stop this scan?",
+    text: "The scan ends now. Findings so far stay listed and no file on the site is changed.",
+    ok: "Yes, stop"
+  });
+  if (!ok) return;
+  const btn = $("mstop");
+  btn.disabled = true;
+  btn.classList.add("busy");
+  try {
+    const r = await api(`api/malware/scans/${mcur}/stop`, { method: "POST" });
+    if (!r.ok) {
+      alertBox({ icon: "error", title: "Could not stop the scan", text: detail(await readJson(r)) });
+      return;
+    }
+    clearInterval(mtimer);
+    mtick();
+    mtimer = setInterval(mtick, 1000);
+  } catch (e) {
+    alertBox({ icon: "error", title: "Could not stop the scan", text: String(e) });
+  } finally {
+    btn.disabled = false;
+    btn.classList.remove("busy");
+  }
+};
+
+$("findings").addEventListener("change", e => {
+  const f = e.target.dataset && e.target.dataset.f;
+  if (!f) return;
+  if (e.target.checked) picked.add(f);
+  else picked.delete(f);
+  savePicked();
+  const files = document.querySelectorAll("#findings input[data-f]");
+  updatePickButtons(true, new Set([...files].map(x => x.dataset.f)).size);
+});
+
+$("mall").onclick = () => {
+  const boxes = [...document.querySelectorAll("#findings input[data-f]")];
+  const all = new Set(boxes.map(x => x.dataset.f));
+  const clear = picked.size === all.size;
+  boxes.forEach(x => {
+    x.checked = !clear;
+    if (clear) picked.delete(x.dataset.f);
+    else picked.add(x.dataset.f);
+  });
+  savePicked();
+  updatePickButtons(true, all.size);
+};
+
+$("mquar").onclick = async () => {
+  if (!mcur || !picked.size) return;
+  const ok = await confirmBox({
+    icon: "warning",
+    title: `Quarantine ${picked.size} file(s)?`,
+    text: "The files are moved out of the web root and kept so they can be restored.",
+    ok: "Yes, quarantine"
+  });
+  if (!ok) return;
+  const btn = $("mquar");
+  btn.disabled = true;
+  btn.classList.add("busy");
+  try {
+    const r = await api(`api/malware/scans/${mcur}/quarantine`, { method: "POST", body: JSON.stringify({ files: [...picked] }) });
+    if (!r.ok) {
+      alertBox({ icon: "error", title: "Quarantine failed", text: detail(await readJson(r)) });
+      return;
+    }
+    toast("success", "Files quarantined");
+    picked.clear();
+    savePicked();
+    findingsKey = "";
+    scanLog.reset();
+    clearInterval(mtimer);
+    mtick();
+    mtimer = setInterval(mtick, 1000);
+  } catch (e) {
+    alertBox({ icon: "error", title: "Quarantine failed", text: String(e) });
+  } finally {
+    btn.classList.remove("busy");
+  }
+};
+
+TEXT_FIELDS.forEach(id => $(id).addEventListener("input", () => {
+  saveForm();
+  markSelected();
+}));
+
+CHECK_FIELDS.forEach(id => $(id).addEventListener("change", saveForm));
+
+function restoreSelection() {
+  if (sess.job) openJob(sess.job);
+  if (sess.scan) {
+    if (Array.isArray(sess.picked)) sess.picked.forEach(f => picked.add(f));
+    openScan(sess.scan, true);
+  }
+  markSelected();
+}
+
+applyForm();
+showView(location.hash.slice(1) || sess.view);
+boot().then(restoreSelection);
+</script>
+</body>
+</html>
